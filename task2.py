@@ -5,7 +5,13 @@ def check(move, player, board):
 
 def human(player, board):
     print othello.print_board(board)
-    print 'Your move?'
+    black, white = 0, 0
+    for sq in othello.squares():
+        piece = board[sq]
+        if piece == othello.BLACK: black += 1
+        elif piece == othello.WHITE: white += 1    
+    print "BLACK: ", black, "WHITE: ", white
+    print 'Your turn?'
     while True:
         move = raw_input('> ')
         if move and check(int(move), player, board):
