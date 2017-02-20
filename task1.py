@@ -79,50 +79,20 @@ def vectorized_result(j):
 	return e
 
 if __name__ == "__main__":
-	"""
-	Obtain 'training_data' and 'test_data' from load_data_wrapper()
+    """
+    Obtain 'training_data' and 'test_data' from load_data_wrapper()
 
-	4 neurons in input layer
-	10 neurons in hidden layer1
-	10 neurons in hidden layer2
-	3 neurons in output layer
+    4 neurons in input layer
+    10 neurons in hidden layer1
+    10 neurons in hidden layer2
+    3 neurons in output layer
 
-	Epochs: 30
-	Mini-batch size: 10
-	Learning rate: 0.5	
-
-	Best result:
-	Epoch 0: 14 / 30
-	Epoch 1: 20 / 30
-	Epoch 2: 20 / 30
-	Epoch 3: 20 / 30
-	Epoch 4: 20 / 30
-	Epoch 5: 22 / 30
-	Epoch 6: 30 / 30
-	Epoch 7: 27 / 30
-	Epoch 8: 20 / 30
-	Epoch 9: 30 / 30
-	Epoch 10: 30 / 30
-	Epoch 11: 30 / 30
-	Epoch 12: 21 / 30
-	Epoch 13: 30 / 30
-	Epoch 14: 30 / 30
-	Epoch 15: 30 / 30
-	Epoch 16: 29 / 30
-	Epoch 17: 30 / 30
-	Epoch 18: 30 / 30
-	Epoch 19: 30 / 30
-	Epoch 20: 30 / 30
-	Epoch 21: 23 / 30
-	Epoch 22: 30 / 30
-	Epoch 23: 30 / 30
-	Epoch 24: 26 / 30
-	Epoch 25: 30 / 30
-	Epoch 26: 30 / 30
-	Epoch 27: 30 / 30
-	Epoch 28: 30 / 30
-	Epoch 29: 30 / 30
-	"""
-	training_data, test_data = load_data_wrapper()
-	net = network.Network([4, 10, 10, 3])
-	net.SGD(training_data, 30, 10, 0.5, test_data=test_data)
+    Epochs: 30
+    Mini-batch size: 10
+    Learning rate: 0.5	
+    """
+    training_data, test_data = load_data_wrapper()
+    print "Training data size = ", len(training_data)
+    print "Test data size = ", len(test_data)
+    net = network.Network([4, 10, 10, 3])
+    net.SGD(training_data, 30, 10, 0.5, test_data=test_data)
