@@ -1,7 +1,9 @@
 """
+Reference: 
+http://neuralnetworksanddeeplearning.com/chap1.html
+
 network.py
 ~~~~~~~~~~
-
 A module to implement the stochastic gradient descent learning
 algorithm for a feedforward neural network.  Gradients are calculated
 using backpropagation.  Note that I have focused on making the code
@@ -9,11 +11,7 @@ simple, easily readable, and easily modifiable.  It is not optimized,
 and omits many desirable features.
 """
 
-#### Libraries
-# Standard library
 import random
-
-# Third-party libraries
 import numpy as np
 
 class Network(object):
@@ -131,7 +129,6 @@ class Network(object):
         \partial a for the output activations."""
         return (output_activations-y)
 
-#### Miscellaneous functions
 def sigmoid(z):
     """The sigmoid function."""
     return 1.0/(1.0+np.exp(-z))

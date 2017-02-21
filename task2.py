@@ -1,3 +1,11 @@
+"""
+Reference:
+http://dhconnelly.com/paip-python/docs/paip/othello.html
+
+Modified on 19 Feb 2017
+@author: YoonSeong Yong
+"""
+
 import othello
 
 def check(move, player, board):

@@ -1,7 +1,11 @@
 """
+Reference: 
+http://neuralnetworksanddeeplearning.com/chap1.html
+
 Created on 19 Feb 2017
 @author: YoonSeong Yong
 """
+
 import pandas
 import numpy as np
 import network

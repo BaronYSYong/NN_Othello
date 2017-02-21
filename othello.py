@@ -1,91 +1,15 @@
 """
-**Othello** is a turn-based two-player strategy board game.  The players take
-turns placing pieces--one player white and the other player black--on an 8x8
-board in such a way that captures some of the opponent's pieces, with the goal
-of finishing the game with more pieces of their color on the board.
-
-Every move must capture one more more of the opponent's pieces.  To capture,
-player A places a piece adjacent to one of player B's pieces so that there is a
-straight line (horizontal, vertical, or diagonal) of adjacent pieces that begins
-with one of player A's pieces, continues with one more more of player B's
-pieces, and ends with one of player A's pieces.
-
-For example, if Black places a piece on square (5, 1), he will capture all of
-Black's pieces between (5, 1) and (5, 6):
-
-      1 2 3 4 5 6 7 8      1 2 3 4 5 6 7 8
-    1 . . . . . . . .    1 . . . . . . . .
-    2 . . . . . . . .    2 . . . . . . . .
-    3 . . o X . o . .    3 . . o X . o . .
-    4 . . o o X X . .    4 . . o o X X . .
-    5 . o o o o X . .    5 X X X X X X . .
-    6 . . . X o . . .    6 . . . X o . . .
-    7 . . . . . . . .    7 . . . . . . . .
-    8 . . . . . . . .    8 . . . . . . . .
-
-For more more information about the game (which is also known as Reversi)
-including detailed rules, see the entry on [Wikipedia][wiki].  Additionally,
-this implementation doesn't take into account some tournament-style Othello
-details, such as game time limits and a different indexing scheme.
-
-We will implement representations for the board and pieces and the mechanics of
-playing a game.  We will then explore several game-playing strategies.  There is
-a simple command-line program [provided](examples/othello/othello.html) for
-playing against the computer or comparing two strategies.
-
-Written by [Daniel Connelly](http://dhconnelly.com).  This implementation follows
-chapter 18 of Peter Norvig's "Paradigms of Artificial Intelligence".
-
-[wiki]: http://en.wikipedia.org/wiki/Reversi
-
+Reference:
+http://dhconnelly.com/paip-python/docs/paip/othello.html
 """
 
-# -----------------------------------------------------------------------------
-## Table of contents
+import random
 
-# 1. [Board representation](#board)
-# 2. [Playing the game](#playing)
-# 3. [Strategies](#strategies)
-#     - [Random](#random)<br>
-#     - [Local maximization](#localmax)<br>
-#     - [Minimax search](#minimax)<br>
-#     - [Alpha-beta search](#alphabeta)<br>
-# 4. [Conclusion](#conclusion)
-
-
-# -----------------------------------------------------------------------------
-# <a id="board"></a>
-## Board representation
-
-# We represent the board as a 100-element list, which includes each square on
-# the board as well as the outside edge.  Each consecutive sublist of ten
-# elements represents a single row, and each list element stores a piece.  An
-# initial board contains four pieces in the center:
-
-#     ? ? ? ? ? ? ? ? ? ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . o X . . . ?
-#     ? . . . X o . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? ? ? ? ? ? ? ? ? ?
-
-# This representation has two useful properties:
-#
-# 1. Square (m,n) can be accessed as `board[mn]`.  This avoids the need to write
-#    functions that convert between square locations and list indexes.
-# 2. Operations involving bounds checking are slightly simpler.
-
-# The outside edge is marked ?, empty squares are ., black is X, and white is o.
-# The black and white pieces represent the two players.
+### Board representation
 EMPTY, BLACK, WHITE, OUTER = '.', 'X', 'o', '?'
 PIECES = (EMPTY, BLACK, WHITE, OUTER)
 PLAYERS = {BLACK: 'Black', WHITE: 'White'}
 
-# To refer to neighbor squares we can add a direction to a square.
 UP, DOWN, LEFT, RIGHT = -10, 10, -1, 1
 UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT = -9, 11, 9, -11
 DIRECTIONS = (UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT)
@@ -102,6 +26,8 @@ def initial_board():
     # The middle four squares should hold the initial piece positions.
     board[44], board[45] = WHITE, BLACK
     board[54], board[55] = BLACK, WHITE
+    global count_move
+    count_move = 0
     return board
 
 def print_board(board):
@@ -113,19 +39,7 @@ def print_board(board):
         rep += '%d %s\n' % (row, ' '.join(board[begin:end]))
     return rep
 
-
-# -----------------------------------------------------------------------------
-# <a id="playing"></a>
-## Playing the game
-
-# We need functions to get moves from players, check to make sure that the moves
-# are legal, apply the moves to the board, and detect when the game is over.
-
-### Checking moves
-
-# A move must be both valid and legal: it must refer to a real square, and it
-# must form a bracket with another piece of the same color with pieces of the
-# opposite color in between.
+### Checking moves 
 
 def is_valid(move):
     """Is move a square on the board?"""
@@ -154,9 +68,6 @@ def is_legal(move, player, board):
     return board[move] == EMPTY and any(map(hasbracket, DIRECTIONS))
 
 ### Making moves
-
-# When the player makes a move, we need to update the board and flip all the
-# bracketed pieces.
 
 def make_move(move, player, board):
     """Update the board to reflect the move by the specified player."""
@@ -228,6 +139,9 @@ def get_move(strategy, player, board):
     move = strategy(player, copy)
     if not is_valid(move) or not is_legal(move, player, board):
         raise IllegalMoveError(player, move, copy)
+    global count_move
+    count_move += 1
+    print 'Number of moves: ', count_move    
     return move
 
 def score(player, board):
@@ -240,30 +154,14 @@ def score(player, board):
         elif piece == opp: theirs += 1
     return mine - theirs
 
-
-# -----------------------------------------------------------------------------
-# <a id="strategies"></a>
 ## Play strategies
-
-# <a id="random"></a>
 ### Random
-
-# The easiest strategy to implement simply picks a move at random.
-
-import random
-
 def random_strategy(player, board):
     """A strategy that always chooses a random legal move."""
     return random.choice(legal_moves(player, board))
 
-# <a id="localmax"></a>
+
 ### Local maximization
-
-# A more sophisticated strategy could look at every available move and evaluate
-# them in some way.  This consists of getting a list of legal moves, applying
-# each one to a copy of the board, and choosing the move that results in the
-# "best" board.
-
 def maximizer(evaluate):
     """
     Construct a strategy that chooses the best move by maximizing
@@ -274,16 +172,6 @@ def maximizer(evaluate):
             return evaluate(player, make_move(move, player, list(board)))
         return max(legal_moves(player, board), key=score_move)
     return strategy
-
-# One possible evaluation function is `score`.  A strategy constructed with
-# `maximizer(score)` will always make the move that results in the largest
-# immediate gain in pieces.
-
-# A more advanced evaluation function might consider the relative worth of each
-# square on the board and weight the score by the value of the pieces held by
-# each player.  Since corners and (most) edge squares are very valuable, we
-# could weight those more heavily, and add negative weights to the squares that,
-# if acquired, could lead to the opponent capturing the corners or edges.
 
 SQUARE_WEIGHTS = [
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -316,12 +204,8 @@ def weighted_score(player, board):
             total -= SQUARE_WEIGHTS[sq]
     return total
 
-# <a id="minimax"></a>
 ### Minimax search
-
-# The maximizer strategies are very short-sighted, and a player who can consider
-# the implications of a move several turns in advance could have a significant
-# advantage.  The **minimax** algorithm does just that.
+""" http://en.wikipedia.org/wiki/Minimax """
 
 def minimax(player, board, depth, evaluate):
     """
@@ -378,29 +262,31 @@ def minimax_searcher(depth, evaluate):
         return minimax(player, board, depth, evaluate)[1]
     return strategy
 
-# <a id="alphabeta"></a>
 ### Alpha-Beta search
 
-# Minimax is very effective, but it does too much work: it evaluates many search
-# trees that should be ignored.
+"""
+http://en.wikipedia.org/wiki/Alpha-beta_pruning
 
-# Consider what happens when minimax is evaluating two moves, M1 and M2, on one
-# level of a search tree.  Suppose minimax determines that M1 can result in a
-# score of S.  While evaluating M2, if minimax finds a move in its subtree that
-# could result in a better score than S, the algorithm should immediately quit
-# evaluating M2: the opponent will force us to play M1 to avoid the higher score
-# resulting from M1, so we shouldn't waste time determining just how much better
-# M2 is than M1.
+Minimax is very effective, but it does too much work: it evaluates many search
+trees that should be ignored.
+Consider what happens when minimax is evaluating two moves, M1 and M2, on one
+level of a search tree.  Suppose minimax determines that M1 can result in a
+score of S.  While evaluating M2, if minimax finds a move in its subtree that
+could result in a better score than S, the algorithm should immediately quit
+evaluating M2: the opponent will force us to play M1 to avoid the higher score
+resulting from M1, so we shouldn't waste time determining just how much better
+M2 is than M1.
 
-# We need to keep track of two values:
-# 
-# - alpha: the maximum score achievable by any of the moves we have encountered.
-# - beta: the score that the opponent can keep us under by playing other moves.
-#
-# When the algorithm begins, alpha is the smallest value and beta is the largest
-# value.  During evaluation, if we find a move that causes `alpha >= beta`, then
-# we can quit searching this subtree since the opponent can prevent us from
-# playing it.
+We need to keep track of two values:
+ 
+- alpha: the maximum score achievable by any of the moves we have encountered.
+- beta: the score that the opponent can keep us under by playing other moves.
+
+When the algorithm begins, alpha is the smallest value and beta is the largest
+value.  During evaluation, if we find a move that causes `alpha >= beta`, then
+we can quit searching this subtree since the opponent can prevent us from
+playing it.
+"""
 
 def alphabeta(player, board, alpha, beta, depth, evaluate):
     """
@@ -444,19 +330,3 @@ def alphabeta_searcher(depth, evaluate):
     def strategy(player, board):
         return alphabeta(player, board, MIN_VALUE, MAX_VALUE, depth, evaluate)[1]
     return strategy
-
-
-# -----------------------------------------------------------------------------
-# <a id="conclusion"></a>
-## Conclusion
-
-# The strategies we've discussed are very general and are applicable to a broad
-# range of strategy games, such as Chess, Checkers, and Go.  More advanced
-# strategies for Othello exist that apply various gameplay heuristics; some of
-# these are discussed in "Paradigms of Artificial Intelligence Programming" by
-# Peter Norvig.
-#
-# See Wikipedia for more details on [minimax][mm] and [alpha-beta][ab] search.
-#
-# [mm]: http://en.wikipedia.org/wiki/Minimax
-# [ab]: http://en.wikipedia.org/wiki/Alpha-beta_pruning
