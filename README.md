@@ -12,6 +12,6 @@
 
 * Execute command in terminal
 ```shell
-	$ python task1.py
-	$ python task2.py
-
+$ python task1.py
+$ python task2.py
+```
