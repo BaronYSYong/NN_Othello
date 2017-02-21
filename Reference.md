@@ -1,4 +1,4 @@
-# README #
+# Reference #
 
 A Simple Neural Network for Playing Othello
 
