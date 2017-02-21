@@ -11,6 +11,7 @@
 ### How to run ###
 
 * Execute command in terminal
+```shell
 	$ python task1.py
 	$ python task2.py
 
