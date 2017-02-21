@@ -26,3 +26,7 @@ A Simple Neural Network for Playing Othello
 	- https://en.wikipedia.org/wiki/Temporal_difference_learning
 * Q Learning in Wikipedia
 	- https://en.wikipedia.org/wiki/Q-learning
+* Q-Learning with Neural Networks
+    - http://outlace.com/Reinforcement-Learning-Part-3/
+* Path finding Q-learning tutorial
+    - http://mnemstudio.org/path-finding-q-learning-tutorial.htm
