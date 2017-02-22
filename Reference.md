@@ -30,3 +30,4 @@ A Simple Neural Network for Playing Othello
     - http://outlace.com/Reinforcement-Learning-Part-3/
 * Path finding Q-learning tutorial
     - http://mnemstudio.org/path-finding-q-learning-tutorial.htm
+    - https://gist.github.com/kastnerkyle/d127197dcfdd8fb888c2
