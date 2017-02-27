@@ -7,6 +7,7 @@ Q[state, action] = (1-alpha)*Q[state, action] + alpha * (R[state, action]) + gam
 """
 
 import numpy as np
+import pandas
 
 def update_q(state, next_state, action, alpha = 1.0, gamma = 0.8):
     Q[state, action] = (1-alpha)*Q[state, action] + alpha * (R[state, action]) + gamma * max(Q[next_state, :])
@@ -41,4 +42,6 @@ for i in range(2):
     update_q(5,4,4)
     update_q(5,5,5)
 
-print Q
+df = pandas.DataFrame(Q[0:,0:])
+
+print df
