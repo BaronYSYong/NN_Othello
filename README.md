@@ -11,6 +11,9 @@
 ## Reference
 * http://neuralnetworksanddeeplearning.com/chap1.html
 
+## Data
+* https://github.com/mnielsen/neural-networks-and-deep-learning/tree/master/data
+
 ## How to run
 
 Execute command in terminal
