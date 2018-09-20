@@ -1,4 +1,4 @@
-# README
+# NN_Othello
 
 ## Environment
 
@@ -21,5 +21,5 @@ Execute command in terminal
 $ python task1.py
 $ python task2.py
 ```
-=======
-# NN_Othello
+
+
